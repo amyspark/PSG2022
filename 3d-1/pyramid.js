@@ -99,7 +99,7 @@ class Pyramid {
 		gl.useProgram( this.prog );
 
 		// 2. Setear matriz de transformacion
-		gl.uniformMatrix4fv( this.mvp, false, trans );
+		gl.uniformMatrix4fv( this.mvp_loc, false, trans );
 
 		// 3. Binding del buffer de posiciones
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.pos_buffer );
@@ -109,7 +109,7 @@ class Pyramid {
 		gl.enableVertexAttribArray( this.pos_loc );
 
 		// 4. Lo mismo pero para color
-		gl.bindBuffer( gl.ARRAY_BUFFER, this.color_buffer );
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.colorbuffer );
 		gl.vertexAttribPointer( this.color_loc, 3, gl.FLOAT, false, 0, 0 );
 		gl.enableVertexAttribArray( this.color_loc );
 
