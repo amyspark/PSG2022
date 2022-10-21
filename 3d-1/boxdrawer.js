@@ -27,7 +27,7 @@ class BoxDrawer {
 			 1,  1,  1 ];
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.vertbuffer);
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pos), gl.STATIC_DRAW);
-        
+
         // Conectividad de las lineas
 		this.linebuffer = gl.createBuffer();
 		var line = [
