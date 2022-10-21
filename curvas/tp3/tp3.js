@@ -300,7 +300,6 @@ class LineDrawer
 		// Si bien creamos el buffer, no vamos a ponerle contenido en este
 		// constructor. La actualziación de la información de los vértices
 		// la haremos dentro de updatePoints().
-		
 	}
 
 	// Actualización del viewport (se llama al inicializar la web o al cambiar el tamaño de la pantalla)
@@ -311,11 +310,11 @@ class LineDrawer
 		// Simplemente inicializamos la matriz para que escale los elementos de la escena
 		// al ancho y alto del canvas, invirtiendo la coordeanda y. La matriz está en formato 
 		// column-major.
-		var trans = [ 2/width,0,0,0,  0,-2/height,0,0, 0,0,1,0, -1,1,0,1 ];
+		this.trans = [ 2/width,0,0,0,  0,-2/height,0,0, 0,0,1,0, -1,1,0,1 ];
 
 		// Seteamos la matriz en la variable unforme del shader
 		gl.useProgram( this.prog );
-		gl.uniformMatrix4fv( this.mvp, false, trans );
+		gl.uniformMatrix4fv( this.mvp, false, this.trans );
 	}
 
 	// Cambiaron los puntos de control, asi que tenemos que actualziar los datos en el buffer

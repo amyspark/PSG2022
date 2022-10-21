@@ -145,9 +145,11 @@ window.onload = function()
 	gl.enableVertexAttribArray(c);
 
 
-        /******* REENDERIZAMOS  *******/
+	/******* REENDERIZAMOS  *******/
 	// Ahora que ya está todo seteado, renderizamos la escena. 
 	// El primer paso es siempre limpiar la imagen. 
 	// Cada vez que cambie la escena, tenemos que reenderizar nuevamente. 
-
+	gl.clear( gl.COLOR_BUFFER_BIT );
+	gl.useProgram( prog );
+	gl.drawArrays( gl.TRIANGLES, 0, 3 );
 }
