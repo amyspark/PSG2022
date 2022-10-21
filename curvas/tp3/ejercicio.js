@@ -27,7 +27,6 @@ class CurveDrawer
 		this.tBuffer = gl.createBuffer();
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.tBuffer );
 		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(tv), gl.STATIC_DRAW);
-		gl.enableVertexAttribArray( this.t );
 
 		// [Completar] Incialización y obtención de las ubicaciones de los atributos y variables uniformes de los shaders	
 		this.uniforms = [
@@ -87,6 +86,7 @@ class CurveDrawer
 
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.tBuffer );
 		gl.vertexAttribPointer( this.t, 1, gl.FLOAT, false, 0, 0 );
+		gl.enableVertexAttribArray( this.t );
 
 		// Dibujamos lineas utilizando primitivas gl.LINE_STRIP 
 		// https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/drawArrays
