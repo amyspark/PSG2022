@@ -70,15 +70,14 @@ function UpdateProjectionMatrix()
 	var fov = 3.145 * 60 / 180; // convierto 60 grados a radianes
 	var s = 1 / Math.tan( fov/2 );
 
-	var top = min_n * Math.tan(fov);
+	var top = min_n * Math.tan(fov / 2);
 	var right = top * ratio;
 
-	// Matriz de perspectiva
 	perspectiveMatrix = [
-		n / right, 0, 0, 0,
-		0, n/top, 0, 0,
-		0, 0, -(f + n) / (f - n), (-2 * f * n) / (f - n),
-		0, 0, -1, 0
+		s/ratio, 0, 0, 0,
+		0, s, 0, 0,
+		0, 0, (n+f)/(f-n), 1,
+		0, 0, -2*n*f/(f-n), 0
 	];
 }
 
