@@ -15,6 +15,8 @@ class BoxDrawer
 		// 4. Creamos el buffer para los vertices				
 		this.vertbuffer = gl.createBuffer();
 
+		gl.useProgram( this.prog );
+
 		// 8 caras del cubo unitario
 		var pos = [
 			-1, -1, -1,
@@ -36,6 +38,7 @@ class BoxDrawer
 			0,4,   1,5,   3,7,   2,6 ];
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.linebuffer);
 		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint8Array(line), gl.STATIC_DRAW);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 	}
 
 	// Esta función se llama para dibujar la caja
@@ -57,6 +60,7 @@ class BoxDrawer
 
 		// 5. Dibujamos
 		gl.drawElements( gl.LINES, 24, gl.UNSIGNED_BYTE, 0 );
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 	}
 }
 

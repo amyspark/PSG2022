@@ -75,7 +75,8 @@ function GetModelViewMatrix( translationX, translationY, translationZ, rotationX
 	];
 
 	// [COMPLETAR] Modificar el código para formar la matriz de transformación.
-	var mv = ...;
+	var mv = MatrixMult(trans, MatrixMult(rx, ry))
+
 	return mv;
 }
 
@@ -103,7 +104,6 @@ class MeshDrawer
 		// 4. Creamos los buffers
 		this.pos_buffer = gl.createBuffer();
 		this.normal_buffer = gl.createBuffer();
-
 	}
 	
 	// Esta función se llama cada vez que el usuario carga un nuevo
@@ -116,13 +116,27 @@ class MeshDrawer
 	// normals [n0,n0,n0,n1,n1,n1,...]. 
 	setMesh( vertPos, texCoords, normals )
 	{
+		gl.useProgram( this.prog );
 		// [COMPLETAR] Actualizar el contenido del buffer de vértices y otros atributos..
 		this.numTriangles = vertPos.length / 3 / 3;
 
 		// 1. Binding y seteo del buffer de posiciones
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.pos_buffer );
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertPos), gl.STATIC_DRAW);
+		gl.vertexAttribPointer( this.pos_loc, 3, gl.FLOAT, false, 0, 0 );
 		
-		// 2. Binding y seteo del buffer de normales	
-		
+		// 2. Binding y seteo del buffer de normales
+
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.normal_buffer );
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+		gl.vertexAttribPointer( this.normal_loc, 3, gl.FLOAT, false, 0, 0 );
+
+		// 3. Binding y seteo del búfer de texturas
+
+		// gl.bindBuffer( gl.ARRAY_BUFFER, this.tex_buffer );
+		// gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texCoords), gl.STATIC_DRAW);
+		// gl.vertexAttribPointer( this.tex_coord, 3, gl.FLOAT, false, 0, 0 );
 	}
 	
 	
@@ -135,14 +149,20 @@ class MeshDrawer
 		// [COMPLETAR] Completar con lo necesario para dibujar la colección de triángulos en WebGL
 		
 		// 1. Seleccionamos el shader
+		gl.useProgram( this.prog );
 	
 		// 2. Setear uniformes con las matrices de transformaciones
+		gl.uniformMatrix4fv( this.mvp_loc, false, matrixMVP );
+		gl.uniformMatrix4fv( this.mv_loc, false, matrixMV );
 
-   		// 3. Habilitar atributos: vértices, normales, texturas
+		// 3. Habilitar atributos: vértices, normales, texturas
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.pos_buffer )
+		gl.enableVertexAttribArray( this.pos_loc );
+		gl.bindBuffer( gl.ARRAY_BUFFER, this.normal_buffer )
+		gl.enableVertexAttribArray( this.normal_loc );
 
 		// 4 Binding del buffer de color
-
-		gl.drawArrays( gl.TRIANGLES, 0, this.numTriangles * 3 );
+		gl.drawArrays( gl.TRIANGLES, 0, this.numTriangles * 3);
 	}
 	
 	
@@ -150,13 +170,16 @@ class MeshDrawer
 	setLightDir( x, y, z )
 	{		
 		// [COMPLETAR] Setear variables uniformes en el fragment shader para especificar la dirección de la luz
-		
+		gl.useProgram( this.prog );
+		gl.uniform3f( this.light_dir, x, y, z );
 	}
 		
 	// Este método se llama al actualizar el brillo del material 
 	setShininess( shininess )
 	{		
 		// [COMPLETAR] Setear variables uniformes en el fragment shader para especificar el brillo.
+		gl.useProgram( this.prog );
+		gl.uniform1f( this.shininess, shininess );
 	}
 }
 
@@ -187,23 +210,32 @@ var meshVS = `
 
 	uniform mat4 mvp;
 	uniform mat4 mv;
+	uniform vec3 light_dir;
+	uniform float shininess;
 
+	varying vec3 fColor;
 
 	void main()
 	{ 
-
 		gl_Position = mvp * vec4(pos,1);
+		vec3 p = -(mv * vec4(pos, 1)).xyz;
+
+		vec3 N = normalize((mv * vec4(normal, 1.0)).xyz);
+		vec3 L = normalize(light_dir - p);
+		vec3 E = normalize(-p);
+		vec3 H = normalize( L + E );
+
+		fColor = vec3(1.0, 0.0, 0.0) * max(vec3(0.0), dot(N, H)) * shininess;
 	}
 `;
 
 var meshFS = `
 	precision mediump float;
-
+	varying vec3 fColor;
 
 	void main()
-	{		
-
-		gl_FragColor = vec4( surface_color, 1 );
+	{
+		gl_FragColor = vec4( fColor, 1.0 );
 	}
 `;
 
